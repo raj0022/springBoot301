@@ -7,9 +7,6 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 /**
  * Config Server application
  * 
- * @author Swati Raj
- * @since 1.0.0
- *
  */
 @EnableConfigServer
 @SpringBootApplication
