@@ -15,5 +15,6 @@ public interface OrderService  {
 	Optional<Order> getOrderById(Long id);
 	double getOrderAmountByOrderId(Long id);
 	OrderUpdateResponseDto updateOrder(OrderUpdateDto orderUpdateRequest) throws OrderException;
+	Order placeOrderFeing(OrderRequestDto orderRequest) throws OrderException;
 
 }

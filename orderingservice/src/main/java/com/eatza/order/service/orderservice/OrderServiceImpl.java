@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -24,6 +23,7 @@ import com.eatza.order.exception.OrderException;
 import com.eatza.order.model.Order;
 import com.eatza.order.model.OrderedItem;
 import com.eatza.order.repository.OrderRepository;
+import com.eatza.order.service.itemservice.ItemClient;
 import com.eatza.order.service.itemservice.ItemService;
 
 
@@ -38,14 +38,59 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	ItemService itemService;
 
-	@Value("${restaurant.search.item.url}")
-	private String restaurantServiceItemUrl;
+	//@Value("${restaurant.search.item.url}")
+	private String restaurantServiceItemUrl="http://localhost:8099/restaurant/item/id";
 
 	@Autowired
 	RestTemplate restTemplate;
 
-	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+	@Autowired
+	ItemClient itemClient;
 
+	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+	
+	
+	@Override
+	public Order placeOrderFeing(OrderRequestDto orderRequest) throws OrderException {
+		logger.debug("In place order method, creating order object to persist");
+		Order order = new Order(orderRequest.getCustomerId(), "CREATED", orderRequest.getRestaurantId());
+		logger.debug("saving order in db");
+		Order savedOrder = orderRepository.save(order);
+		logger.debug("Getting all ordered items to persist");
+		List<OrderedItemsDto> itemsDtoList = orderRequest.getItems();
+		for(OrderedItemsDto itemDto: itemsDtoList) {
+			try {
+				logger.debug("Calling restaurant search service to get item details");
+				
+				ItemFetchDto item = itemClient.findByItemId(itemDto.getItemId());
+				
+				if(item==null ) {
+
+					orderRepository.delete(order);
+					throw new OrderException("Item not found");
+
+				} 
+				if(!(item.getMenu().getRestaurant().getId().equals(order.getRestaurantId()))) {
+					// handle exception here later.
+					orderRepository.delete(order);
+					throw new OrderException("Item not in given restaurant");
+				}
+				if( itemDto.getQuantity()<=0) {
+					orderRepository.delete(order);
+					throw new OrderException("Quantity of item cannot be 0");
+				}
+				OrderedItem itemToPersist = new OrderedItem(item.getName(), itemDto.getQuantity(), item.getPrice(),savedOrder, item.getId());
+				itemService.saveItem(itemToPersist);
+			} 
+			catch(ResourceAccessException e) {
+				throw new OrderException("Something went wrong, looks "
+						+ "like restaurant is currently not accepting orders");
+			}
+		}
+		logger.debug("Saved order to db");
+		return savedOrder;
+	}
+	
 
 	@Override
 	public Order placeOrder(OrderRequestDto orderRequest) throws OrderException {

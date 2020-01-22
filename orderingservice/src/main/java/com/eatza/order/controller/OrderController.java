@@ -34,7 +34,7 @@ public class OrderController {
 	@PostMapping("/order")
 	public ResponseEntity<Order> placeOrder(@RequestHeader String authorization, @RequestBody OrderRequestDto orderRequestDto) throws OrderException{
 		logger.debug("In place order method, calling the service");
-		Order order = orderService.placeOrder(orderRequestDto);
+		Order order = orderService.placeOrderFeing(orderRequestDto);
 		logger.debug("Order Placed Successfully");
 		return ResponseEntity
 				.status(HttpStatus.OK)
