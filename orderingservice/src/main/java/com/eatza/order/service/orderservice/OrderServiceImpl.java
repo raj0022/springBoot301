@@ -62,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
 			try {
 				logger.debug("Calling restaurant search service to get item details");
 				
-				ItemFetchDto item = itemClient.findByItemId(itemDto.getItemId());
+				ItemFetchDto item = itemClient.getItemById(itemDto.getItemId());
 				
 				if(item==null ) {
 
