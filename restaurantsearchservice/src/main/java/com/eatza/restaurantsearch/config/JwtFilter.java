@@ -18,11 +18,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 
-public class JwtFilter extends GenericFilterBean {
+public class JwtFilter /*extends GenericFilterBean */ {
 	
 
 	
-	public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException
+	/* public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException
 	{
 
 		final HttpServletRequest request = (HttpServletRequest) req;
@@ -54,5 +54,5 @@ public class JwtFilter extends GenericFilterBean {
 
 			chain.doFilter(req, res);
 		}
-	}
+	}*/
 }

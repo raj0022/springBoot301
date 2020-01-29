@@ -14,26 +14,26 @@ import com.eatza.restaurantsearch.exception.UnauthorizedException;
 import com.eatza.restaurantsearch.service.authenticationservice.JwtAuthenticationService;
 
 
-@RestController
+/*@RestController*/
 public class JwtAuthenticationController {
 
-	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationController.class);
-
-	@Autowired
-	JwtAuthenticationService authenticationService;
-
-
-	@PostMapping("/login")
-	public ResponseEntity<String> enroll(@RequestBody UserDto user) throws UnauthorizedException  {
-		logger.debug("Calling authentication service to verify user");
-		String token = authenticationService.authenticateUser(user);
-		logger.debug("User verified, returning back token");	 
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(token);
-
-
-
-	}
+//	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationController.class);
+//
+//	@Autowired
+//	JwtAuthenticationService authenticationService;
+//
+//
+//	@PostMapping("/login")
+//	public ResponseEntity<String> enroll(@RequestBody UserDto user) throws UnauthorizedException  {
+//		logger.debug("Calling authentication service to verify user");
+//		String token = authenticationService.authenticateUser(user);
+//		logger.debug("User verified, returning back token");	 
+//		return ResponseEntity
+//				.status(HttpStatus.OK)
+//				.body(token);
+//
+//
+//
+//	}
 
 }
